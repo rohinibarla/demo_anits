@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NumPy &amp; Pandas — Quick Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --surface:#FFFFFF;
+    --ink:#1F1E1C;
+    --muted:#6B675F;
+    --line:#E9E5DC;
+    --coral:#CC785C;
+    --code-bg:#F5F3EC;
+    --good:#5E7A52;
+    --good-bg:#EBF0E5;
+    --bad:#B5654A;
+    --bad-bg:#F6E7E0;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;display:flex;align-items:flex-start;justify-content:center;
+  }
+  .wrap{max-width:680px;width:100%;padding:56px 24px 80px;}
+
+  .eyebrow{
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--coral);font-weight:600;margin-bottom:14px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:500;font-size:clamp(1.9rem,5vw,2.6rem);
+    line-height:1.1;margin:0 0 10px;letter-spacing:-.01em;
+  }
+  .lede{color:var(--muted);margin:0 0 28px;}
+
+  /* progress */
+  .bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:6px;}
+  .bar span{display:block;height:100%;width:0;background:var(--coral);transition:width .4s ease;}
+  .count{font-size:.8rem;color:var(--muted);font-family:'JetBrains Mono',monospace;margin-bottom:26px;}
+
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    padding:28px 26px;
+  }
+  .qnum{
+    font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--coral);
+    font-weight:500;letter-spacing:.06em;margin-bottom:10px;
+  }
+  .qtext{font-size:1.18rem;font-weight:500;margin:0 0 6px;line-height:1.45;}
+  pre{
+    margin:14px 0 4px;background:var(--code-bg);border:1px solid var(--line);
+    border-radius:10px;padding:12px 14px;overflow-x:auto;
+  }
+  code{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:#3a3833;line-height:1.7;}
+
+  .opts{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+  .opt{
+    text-align:left;background:var(--surface);border:1.5px solid var(--line);
+    border-radius:11px;padding:13px 16px;font-size:.96rem;color:var(--ink);
+    font-family:inherit;cursor:pointer;transition:all .15s ease;
+    display:flex;align-items:center;gap:12px;
+  }
+  .opt:hover:not(:disabled){border-color:var(--coral);background:#FCFBF8;}
+  .opt:disabled{cursor:default;}
+  .opt .key{
+    font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;
+    width:24px;height:24px;flex:none;border-radius:6px;background:var(--code-bg);
+    display:flex;align-items:center;justify-content:center;color:var(--muted);
+  }
+  .opt.correct{border-color:var(--good);background:var(--good-bg);}
+  .opt.correct .key{background:var(--good);color:#fff;}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg);}
+  .opt.wrong .key{background:var(--bad);color:#fff;}
+  .opt.mono code{font-size:.86rem;}
+
+  .feedback{
+    margin-top:18px;padding:14px 16px;border-radius:11px;font-size:.92rem;
+    display:none;line-height:1.55;
+  }
+  .feedback.show{display:block;}
+  .feedback.ok{background:var(--good-bg);color:#3f5436;}
+  .feedback.no{background:var(--bad-bg);color:#7d4534;}
+  .feedback b{font-weight:600;}
+  .feedback code{background:rgba(0,0,0,.05);padding:1px 5px;border-radius:4px;font-size:.85rem;}
+
+  .actions{margin-top:22px;display:flex;justify-content:flex-end;}
+  .btn{
+    background:var(--coral);color:#fff;border:none;border-radius:10px;
+    padding:11px 22px;font-family:inherit;font-size:.95rem;font-weight:500;
+    cursor:pointer;transition:opacity .15s ease;
+  }
+  .btn:hover{opacity:.9;}
+  .btn:disabled{opacity:.35;cursor:not-allowed;}
+
+  /* results */
+  .result{text-align:center;padding:40px 26px;}
+  .score{
+    font-family:'Fraunces',serif;font-size:4rem;font-weight:500;line-height:1;
+    color:var(--coral);margin:6px 0 2px;
+  }
+  .score small{font-size:1.6rem;color:var(--muted);}
+  .verdict{font-family:'Fraunces',serif;font-size:1.5rem;margin:18px 0 8px;font-weight:500;}
+  .result p{color:var(--muted);margin:0 auto 24px;max-width:42ch;}
+  .review{text-align:left;margin-top:26px;border-top:1px solid var(--line);padding-top:8px;}
+  .review .item{
+    display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);
+    font-size:.92rem;align-items:flex-start;
+  }
+  .review .item:last-child{border-bottom:none;}
+  .mark{flex:none;width:22px;height:22px;border-radius:50%;display:flex;
+    align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;}
+  .mark.y{background:var(--good);}
+  .mark.n{background:var(--bad);}
+  .review .q{color:var(--ink);}
+  .ghost{
+    background:none;border:1.5px solid var(--line);color:var(--ink);
+    margin-top:28px;
+  }
+  .ghost:hover{border-color:var(--coral);}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Data Analytics · Check Yourself</div>
+  <h1>NumPy &amp; Pandas Quiz</h1>
+  <p class="lede">Five questions. Pick an answer to see if you're right — wrong choices come with a short explanation.</p>
+
+  <div class="bar"><span id="prog"></span></div>
+  <div class="count" id="count"></div>
+
+  <div id="quiz"></div>
+
+  <div id="results" class="hidden"></div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "What does this print?",
+    code: "a = np.array([10, 20, 30, 40])\nprint(a * 2)",
+    options: [
+      {t:"<code>[20 40 60 80]</code>", mono:true},
+      {t:"<code>[10 20 30 40 10 20 30 40]</code>", mono:true},
+      {t:"<code>[12 22 32 42]</code>", mono:true},
+      {t:"An error — you can't multiply an array", mono:false}
+    ],
+    answer:0,
+    why:"NumPy applies the operation to <b>every element at once</b> (vectorisation). Unlike a Python list, where <code>* 2</code> would repeat the list, <code>a * 2</code> doubles each number."
+  },
+  {
+    q: "Which expression keeps only the values greater than 20?",
+    code: "a = np.array([10, 20, 30, 40])",
+    options: [
+      {t:"<code>a.filter(20)</code>", mono:true},
+      {t:"<code>a[a &gt; 20]</code>", mono:true},
+      {t:"<code>a.where(&gt; 20)</code>", mono:true},
+      {t:"<code>a.greater(20)</code>", mono:true}
+    ],
+    answer:1,
+    why:"<b>Boolean indexing</b> is the NumPy way: <code>a &gt; 20</code> builds a mask of True/False, and <code>a[mask]</code> returns the matching elements → <code>[30 40]</code>. There's no <code>.filter()</code> on arrays."
+  },
+  {
+    q: "You load a CSV with Pandas. What type is <code>df</code>?",
+    code: 'df = pd.read_csv("sales.csv")',
+    options: [
+      {t:"A NumPy array", mono:false},
+      {t:"A Python dictionary", mono:false},
+      {t:"A DataFrame", mono:false},
+      {t:"A list of rows", mono:false}
+    ],
+    answer:2,
+    why:"<code>read_csv</code> returns a <b>DataFrame</b> — a table with named columns and an index. It's built on top of NumPy, but adds labels and mixed column types."
+  },
+  {
+    q: "What does this line compute?",
+    code: 'df.groupby("city")["price"].mean()',
+    options: [
+      {t:"The overall average price across all rows", mono:false},
+      {t:"The average price for each city", mono:false},
+      {t:"The number of cities", mono:false},
+      {t:"The most expensive city", mono:false}
+    ],
+    answer:1,
+    why:"<code>groupby(\"city\")</code> splits rows into groups per city, then <code>[\"price\"].mean()</code> averages within each group — giving one average <b>per city</b>, not one number overall."
+  },
+  {
+    q: "Which line removes rows that have empty (missing) values?",
+    code: "# df has some blank cells",
+    options: [
+      {t:"<code>df.fillna(0)</code>", mono:true},
+      {t:"<code>df.clean()</code>", mono:true},
+      {t:"<code>df.dropna()</code>", mono:true},
+      {t:"<code>df.remove(None)</code>", mono:true}
+    ],
+    answer:2,
+    why:"<code>dropna()</code> <b>drops</b> rows containing missing values. <code>fillna(0)</code> is the opposite — it keeps the rows and fills blanks with a value instead."
+  }
+];
+
+let current = 0;
+let score = 0;
+const results = []; // {correct:bool}
+
+const quizEl = document.getElementById('quiz');
+const progEl = document.getElementById('prog');
+const countEl = document.getElementById('count');
+
+function render(){
+  const Q = QUESTIONS[current];
+  progEl.style.width = (current / QUESTIONS.length * 100) + '%';
+  countEl.textContent = `Question ${current + 1} of ${QUESTIONS.length}`;
+
+  let optsHTML = '';
+  Q.options.forEach((o, i) => {
+    const k = String.fromCharCode(65 + i);
+    optsHTML += `<button class="opt ${o.mono?'mono':''}" data-i="${i}">
+      <span class="key">${k}</span><span>${o.t}</span></button>`;
+  });
+
+  quizEl.innerHTML = `
+    <div class="card">
+      <div class="qnum">QUESTION ${current + 1}</div>
+      <p class="qtext">${Q.q}</p>
+      ${Q.code ? `<pre><code>${escapeHtml(Q.code)}</code></pre>` : ''}
+      <div class="opts">${optsHTML}</div>
+      <div class="feedback" id="fb"></div>
+      <div class="actions">
+        <button class="btn" id="next" disabled>${current === QUESTIONS.length-1 ? 'See results' : 'Next question'}</button>
+      </div>
+    </div>`;
+
+  quizEl.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => choose(parseInt(btn.dataset.i)));
+  });
+  document.getElementById('next').addEventListener('click', nextQ);
+}
+
+function choose(i){
+  const Q = QUESTIONS[current];
+  const correct = Q.answer;
+  const btns = quizEl.querySelectorAll('.opt');
+  btns.forEach(b => b.disabled = true);
+
+  btns[correct].classList.add('correct');
+  const fb = document.getElementById('fb');
+
+  if(i === correct){
+    score++;
+    results.push(true);
+    fb.className = 'feedback ok show';
+    fb.innerHTML = '<b>Correct.</b> ' + Q.why;
+  } else {
+    results.push(false);
+    btns[i].classList.add('wrong');
+    fb.className = 'feedback no show';
+    fb.innerHTML = '<b>Not quite.</b> ' + Q.why;
+  }
+  document.getElementById('next').disabled = false;
+}
+
+function nextQ(){
+  current++;
+  if(current < QUESTIONS.length){
+    render();
+  } else {
+    showResults();
+  }
+}
+
+function showResults(){
+  progEl.style.width = '100%';
+  countEl.textContent = 'Complete';
+  quizEl.classList.add('hidden');
+
+  const pct = Math.round(score / QUESTIONS.length * 100);
+  let verdict, msg;
+  if(score === 5){ verdict = "Spotless."; msg = "You've got the core analytics loop down cold."; }
+  else if(score === 4){ verdict = "Strong."; msg = "Just one slip — glance at the explanation and you're set."; }
+  else if(score === 3){ verdict = "Solid start."; msg = "The fundamentals are landing. Review the misses below."; }
+  else if(score === 2){ verdict = "Getting there."; msg = "Worth another pass through the NumPy + Pandas basics."; }
+  else { verdict = "Early days."; msg = "Re-read the explainer, then come back and try again."; }
+
+  let reviewHTML = '';
+  results.forEach((r, i) => {
+    reviewHTML += `<div class="item">
+      <span class="mark ${r?'y':'n'}">${r?'✓':'✕'}</span>
+      <span class="q">${QUESTIONS[i].q.replace(/<[^>]+>/g,'')}</span>
+    </div>`;
+  });
+
+  const res = document.getElementById('results');
+  res.classList.remove('hidden');
+  res.innerHTML = `
+    <div class="card result">
+      <div class="eyebrow" style="margin-bottom:0;">Your score</div>
+      <div class="score">${score}<small>/${QUESTIONS.length}</small></div>
+      <div style="color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.85rem;">${pct}%</div>
+      <div class="verdict">${verdict}</div>
+      <p>${msg}</p>
+      <div class="review">${reviewHTML}</div>
+      <button class="btn ghost" id="retry">Try again</button>
+    </div>`;
+  document.getElementById('retry').addEventListener('click', restart);
+}
+
+function restart(){
+  current = 0; score = 0; results.length = 0;
+  document.getElementById('results').classList.add('hidden');
+  quizEl.classList.remove('hidden');
+  render();
+}
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+render();
+</script>
+</body>
+</html>
