@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NumPy &amp; Pandas for Data Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --surface:#FFFFFF;
+    --ink:#1F1E1C;
+    --muted:#6B675F;
+    --line:#E9E5DC;
+    --coral:#CC785C;
+    --coral-soft:#F4E4DC;
+    --code-bg:#F5F3EC;
+    --np:#B5654A;
+    --pd:#7C8B6F;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:780px;margin:0 auto;padding:0 24px;}
+
+  /* Hero */
+  header{padding:72px 0 40px;}
+  .eyebrow{
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--coral);font-weight:600;margin-bottom:18px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:500;
+    font-size:clamp(2.2rem,6vw,3.3rem);line-height:1.08;
+    margin:0 0 18px;letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;color:var(--coral);}
+  .lede{font-size:1.08rem;color:var(--muted);max-width:60ch;margin:0;}
+
+  /* Section */
+  section{padding:30px 0;border-top:1px solid var(--line);}
+  .tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;
+    padding:5px 11px;border-radius:7px;margin-bottom:16px;
+  }
+  .tag.np{background:#F3E6E0;color:var(--np);}
+  .tag.pd{background:#E9EEE3;color:#566849;}
+  .tag .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  h2{
+    font-family:'Fraunces',serif;font-weight:500;font-size:1.75rem;
+    margin:0 0 8px;letter-spacing:-.01em;
+  }
+  .sub{color:var(--muted);font-size:1rem;margin:0 0 24px;max-width:62ch;}
+
+  /* Concept rows */
+  .row{
+    display:grid;grid-template-columns:1fr;gap:6px;
+    padding:18px 0;border-bottom:1px solid var(--line);
+  }
+  .row:last-of-type{border-bottom:none;}
+  .row h3{
+    font-family:'JetBrains Mono',monospace;font-size:.95rem;font-weight:500;
+    margin:0;color:var(--ink);
+  }
+  .row p{margin:0;color:var(--muted);font-size:.95rem;}
+  pre{
+    margin:8px 0 0;background:var(--code-bg);border:1px solid var(--line);
+    border-radius:10px;padding:14px 16px;overflow-x:auto;
+  }
+  code{
+    font-family:'JetBrains Mono',monospace;font-size:.86rem;line-height:1.7;
+    color:#3a3833;
+  }
+  .c-com{color:#9b9587;font-style:italic;}
+  .c-kw{color:var(--coral);}
+  .c-fn{color:#6b7e5c;}
+  .c-out{color:#a99a7a;}
+
+  /* Workflow strip */
+  .flow{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px;
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:20px 22px;
+  }
+  .flow .step{font-size:.9rem;font-weight:500;}
+  .flow .step b{font-family:'JetBrains Mono',monospace;color:var(--coral);font-weight:500;}
+  .flow .arrow{color:var(--line);font-size:1.1rem;}
+
+  footer{
+    padding:36px 0 56px;border-top:1px solid var(--line);
+    color:var(--muted);font-size:.85rem;
+  }
+  footer b{color:var(--ink);font-weight:600;}
+
+  @media(max-width:560px){
+    header{padding:48px 0 28px;}
+    .flow{flex-direction:column;align-items:flex-start;}
+    .flow .arrow{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Data Analytics · Python Toolkit</div>
+    <h1>Two libraries that do <em>most</em> of the heavy lifting.</h1>
+    <p class="lede">NumPy gives you fast numbers. Pandas gives you tables. Together they cover the everyday loop of analytics — load, clean, compute, summarise.</p>
+  </header>
+
+  <!-- NUMPY -->
+  <section>
+    <span class="tag np"><span class="dot"></span>NumPy</span>
+    <h2>The number engine</h2>
+    <p class="sub">A grid of numbers (the <em>array</em>) that runs math on whole columns at once — no loops, far faster than plain lists.</p>
+
+    <div class="row">
+      <h3>Create an array</h3>
+      <p>Wrap a list to get a vectorised array.</p>
+<pre><code><span class="c-kw">import</span> numpy <span class="c-kw">as</span> np
+a = np.<span class="c-fn">array</span>([10, 20, 30, 40])</code></pre>
+    </div>
+
+    <div class="row">
+      <h3>Math on the whole array</h3>
+      <p>One operation touches every element.</p>
+<pre><code>a * 2          <span class="c-com"># [20 40 60 80]</span>
+a.<span class="c-fn">mean</span>()       <span class="c-com"># 25.0</span>
+a[a &gt; 20]      <span class="c-com"># [30 40]  → filter by condition</span></code></pre>
+    </div>
+
+    <div class="row">
+      <h3>Shape &amp; aggregate</h3>
+      <p>Reshape into rows/columns and reduce along an axis.</p>
+<pre><code>m = a.<span class="c-fn">reshape</span>(2, 2)   <span class="c-com"># [[10 20],[30 40]]</span>
+m.<span class="c-fn">sum</span>(axis=0)        <span class="c-com"># column totals → [40 60]</span></code></pre>
+    </div>
+  </section>
+
+  <!-- PANDAS -->
+  <section>
+    <span class="tag pd"><span class="dot"></span>Pandas</span>
+    <h2>The table workhorse</h2>
+    <p class="sub">Built on NumPy, but with labels. The <em>DataFrame</em> is a spreadsheet in code — named columns, mixed types, and rich grouping.</p>
+
+    <div class="row">
+      <h3>Load your data</h3>
+      <p>Most analysis starts from a CSV.</p>
+<pre><code><span class="c-kw">import</span> pandas <span class="c-kw">as</span> pd
+df = pd.<span class="c-fn">read_csv</span>(<span class="c-out">"sales.csv"</span>)
+df.<span class="c-fn">head</span>()        <span class="c-com"># peek at first 5 rows</span></code></pre>
+    </div>
+
+    <div class="row">
+      <h3>Select &amp; filter</h3>
+      <p>Pick columns by name, rows by condition.</p>
+<pre><code>df[<span class="c-out">"price"</span>]              <span class="c-com"># one column</span>
+df[df[<span class="c-out">"price"</span>] &gt; 500]    <span class="c-com"># rows above 500</span></code></pre>
+    </div>
+
+    <div class="row">
+      <h3>Clean the messy bits</h3>
+      <p>Handle blanks before you trust any number.</p>
+<pre><code>df = df.<span class="c-fn">dropna</span>()                 <span class="c-com"># drop empty rows</span>
+df[<span class="c-out">"price"</span>] = df[<span class="c-out">"price"</span>].<span class="c-fn">fillna</span>(0)</code></pre>
+    </div>
+
+    <div class="row">
+      <h3>Group &amp; summarise</h3>
+      <p>The analytics payoff — split by category, then aggregate.</p>
+<pre><code>df.<span class="c-fn">groupby</span>(<span class="c-out">"city"</span>)[<span class="c-out">"price"</span>].<span class="c-fn">mean</span>()
+<span class="c-com"># avg price per city</span></code></pre>
+    </div>
+  </section>
+
+  <!-- WORKFLOW -->
+  <section>
+    <h2 style="margin-bottom:18px;">The everyday loop</h2>
+    <div class="flow">
+      <span class="step"><b>read_csv</b> load</span>
+      <span class="arrow">→</span>
+      <span class="step"><b>dropna</b> clean</span>
+      <span class="arrow">→</span>
+      <span class="step"><b>filter</b> select</span>
+      <span class="arrow">→</span>
+      <span class="step"><b>groupby</b> compute</span>
+      <span class="arrow">→</span>
+      <span class="step"><b>NumPy</b> math underneath</span>
+    </div>
+  </section>
+
+  <footer>
+    <b>Rule of thumb:</b> reach for Pandas when your data has labels and columns; drop down to NumPy when you need raw speed on pure numbers. Ninety percent of analytics lives in that loop above.
+  </footer>
+
+</div>
+</body>
+</html>
