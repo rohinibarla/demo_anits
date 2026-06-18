@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recursion — A Visual Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F5;
+    --surface:#FFFFFF;
+    --ink:#1F1E1C;
+    --muted:#6B675F;
+    --line:#E9E5DC;
+    --coral:#CC785C;
+    --coral-soft:#F4E4DC;
+    --code-bg:#F5F3EC;
+    --down:#B5654A;
+    --up:#7C8B6F;
+    --base:#C9A227;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:820px;margin:0 auto;padding:0 24px;}
+
+  /* Hero */
+  header{padding:72px 0 40px;}
+  .eyebrow{
+    font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--coral);font-weight:600;margin-bottom:18px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:500;
+    font-size:clamp(2.2rem,6vw,3.3rem);line-height:1.08;
+    margin:0 0 18px;letter-spacing:-.01em;
+  }
+  h1 em{font-style:italic;color:var(--coral);}
+  .lede{font-size:1.08rem;color:var(--muted);max-width:60ch;margin:0;}
+  .back{display:inline-block;margin-bottom:34px;font-size:.85rem;color:var(--coral);text-decoration:none;font-weight:600;}
+  .back:hover{text-decoration:underline;}
+
+  /* Section */
+  section{padding:34px 0;border-top:1px solid var(--line);}
+  .tag{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'JetBrains Mono',monospace;font-size:.8rem;font-weight:500;
+    padding:5px 11px;border-radius:7px;margin-bottom:16px;
+  }
+  .tag .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+  .tag.t-break{background:#F3E6E0;color:var(--down);}
+  .tag.t-call{background:#EFE7DC;color:#9A6A2E;}
+  .tag.t-combine{background:#E9EEE3;color:#566849;}
+  .tag.t-base{background:#F6EFD6;color:#8A6E13;}
+  h2{
+    font-family:'Fraunces',serif;font-weight:500;font-size:1.75rem;
+    margin:0 0 12px;letter-spacing:-.01em;
+  }
+  p{margin:0 0 16px;}
+  .muted{color:var(--muted);}
+
+  /* The four-step mental model */
+  .steps{display:grid;gap:14px;margin:8px 0 0;}
+  .step{
+    display:grid;grid-template-columns:44px 1fr;gap:16px;
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:12px;padding:18px 20px;
+  }
+  .step .num{
+    width:44px;height:44px;border-radius:11px;display:flex;
+    align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-size:1.3rem;font-weight:600;color:#fff;
+  }
+  .step.s1 .num{background:var(--down);}
+  .step.s2 .num{background:#9A6A2E;}
+  .step.s3 .num{background:var(--up);}
+  .step.s4 .num{background:var(--base);}
+  .step h3{margin:2px 0 4px;font-size:1.05rem;font-weight:600;}
+  .step p{margin:0;color:var(--muted);font-size:.96rem;}
+
+  /* Code */
+  pre{
+    background:var(--code-bg);border:1px solid var(--line);
+    border-radius:12px;padding:18px 20px;overflow-x:auto;
+    font-family:'JetBrains Mono',monospace;font-size:.86rem;line-height:1.7;
+    margin:8px 0 18px;
+  }
+  code{font-family:'JetBrains Mono',monospace;font-size:.86em;background:var(--code-bg);padding:1px 6px;border-radius:5px;}
+  pre code{background:none;padding:0;}
+  .c-key{color:#9A6A2E;}
+  .c-fn{color:var(--down);}
+  .c-base{color:#8A6E13;font-weight:500;}
+  .c-com{color:#9C988E;font-style:italic;}
+
+  /* SVG card */
+  .figure{
+    background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;padding:22px;margin:8px 0 10px;
+  }
+  .figure svg{width:100%;height:auto;display:block;}
+  .caption{font-size:.85rem;color:var(--muted);text-align:center;margin-top:10px;}
+
+  /* Legend */
+  .legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:6px;font-size:.85rem;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:7px;}
+  .legend .sw{width:13px;height:13px;border-radius:4px;}
+
+  /* Callout */
+  .callout{
+    background:var(--coral-soft);border-left:3px solid var(--coral);
+    border-radius:8px;padding:16px 20px;margin:6px 0 0;
+  }
+  .callout strong{color:var(--down);}
+
+  footer{padding:48px 0 70px;color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="back" href="index.html">&larr; Back to resources</a>
+    <div class="eyebrow">Problem-solving patterns</div>
+    <h1>Recursion, <em>visualized</em></h1>
+    <p class="lede">A function that solves a problem by calling itself on a smaller piece — trusting that the smaller piece will be solved — then combining the results. Here is the mental model, step by step.</p>
+  </header>
+
+  <!-- The recipe -->
+  <section>
+    <span class="tag t-break"><span class="dot"></span>THE RECIPE</span>
+    <h2>Four moves, every time</h2>
+    <p class="muted">Almost every recursive solution follows the same shape. If you can fill in these four blanks, you have written the function.</p>
+    <div class="steps">
+      <div class="step s1">
+        <div class="num">1</div>
+        <div>
+          <h3>Break it down</h3>
+          <p>Split the problem into one or more <em>smaller versions of the same problem</em>. The pieces must be strictly smaller, so they march toward the base case.</p>
+        </div>
+      </div>
+      <div class="step s2">
+        <div class="num">2</div>
+        <div>
+          <h3>Call recursively — assume it works</h3>
+          <p>Call the function on each smaller piece and <em>trust</em> it returns the correct answer. Don't trace it in your head; take the "leap of faith."</p>
+        </div>
+      </div>
+      <div class="step s3">
+        <div class="num">3</div>
+        <div>
+          <h3>Combine the sub-solutions</h3>
+          <p>Take the answers from the smaller calls and assemble them into the answer for the current, larger problem.</p>
+        </div>
+      </div>
+      <div class="step s4">
+        <div class="num">4</div>
+        <div>
+          <h3>Base case — the stop sign</h3>
+          <p>Add a <em>terminating condition</em>: the smallest input you can answer outright, with no further recursion. Without it, the function calls itself forever.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The descent / ascent visual -->
+  <section>
+    <span class="tag t-combine"><span class="dot"></span>THE BIG PICTURE</span>
+    <h2>Down to the base, back up to the answer</h2>
+    <p class="muted">Recursion has two phases. On the way <strong>down</strong> the problem keeps splitting into smaller pieces until it hits the base case. On the way <strong>up</strong> the small answers combine back into the full solution.</p>
+    <div class="figure">
+      <svg viewBox="0 0 760 430" xmlns="http://www.w3.org/2000/svg" font-family="Inter, sans-serif">
+        <!-- descent arrow -->
+        <defs>
+          <marker id="ar-down" markerWidth="9" markerHeight="9" refX="4.5" refY="8" orient="auto">
+            <path d="M0,0 L9,0 L4.5,9 Z" fill="#B5654A"/>
+          </marker>
+          <marker id="ar-up" markerWidth="9" markerHeight="9" refX="4.5" refY="1" orient="auto">
+            <path d="M0,9 L9,9 L4.5,0 Z" fill="#7C8B6F"/>
+          </marker>
+        </defs>
+
+        <!-- phase labels -->
+        <text x="70" y="34" font-size="13" font-weight="600" fill="#B5654A" letter-spacing="1">BREAK DOWN ↓</text>
+        <text x="600" y="34" font-size="13" font-weight="600" fill="#7C8B6F" letter-spacing="1">COMBINE ↑</text>
+
+        <!-- left side descent boxes -->
+        <g>
+          <rect x="40" y="48" width="230" height="46" rx="9" fill="#FFFFFF" stroke="#E9E5DC"/>
+          <text x="155" y="70" text-anchor="middle" font-size="14" font-weight="600" fill="#1F1E1C">factorial(4)</text>
+          <text x="155" y="86" text-anchor="middle" font-size="11" fill="#6B675F">= 4 × factorial(3)</text>
+
+          <rect x="75" y="124" width="230" height="46" rx="9" fill="#FFFFFF" stroke="#E9E5DC"/>
+          <text x="190" y="146" text-anchor="middle" font-size="14" font-weight="600" fill="#1F1E1C">factorial(3)</text>
+          <text x="190" y="162" text-anchor="middle" font-size="11" fill="#6B675F">= 3 × factorial(2)</text>
+
+          <rect x="110" y="200" width="230" height="46" rx="9" fill="#FFFFFF" stroke="#E9E5DC"/>
+          <text x="225" y="222" text-anchor="middle" font-size="14" font-weight="600" fill="#1F1E1C">factorial(2)</text>
+          <text x="225" y="238" text-anchor="middle" font-size="11" fill="#6B675F">= 2 × factorial(1)</text>
+
+          <!-- base case -->
+          <rect x="145" y="276" width="230" height="50" rx="9" fill="#F6EFD6" stroke="#C9A227" stroke-width="1.5"/>
+          <text x="260" y="299" text-anchor="middle" font-size="14" font-weight="700" fill="#8A6E13">factorial(1) = 1</text>
+          <text x="260" y="316" text-anchor="middle" font-size="11" fill="#8A6E13">BASE CASE — stop here</text>
+        </g>
+
+        <!-- descent arrows -->
+        <line x1="150" y1="94" x2="180" y2="122" stroke="#B5654A" stroke-width="2" marker-end="url(#ar-down)"/>
+        <line x1="185" y1="170" x2="215" y2="198" stroke="#B5654A" stroke-width="2" marker-end="url(#ar-down)"/>
+        <line x1="220" y1="246" x2="250" y2="274" stroke="#B5654A" stroke-width="2" marker-end="url(#ar-down)"/>
+
+        <!-- right side ascent (combine) -->
+        <g>
+          <rect x="490" y="276" width="230" height="46" rx="9" fill="#EFF3EA" stroke="#7C8B6F"/>
+          <text x="605" y="298" text-anchor="middle" font-size="13" font-weight="600" fill="#1F1E1C">returns 1</text>
+          <text x="605" y="314" text-anchor="middle" font-size="11" fill="#566849">factorial(1)</text>
+
+          <rect x="455" y="200" width="230" height="46" rx="9" fill="#EFF3EA" stroke="#7C8B6F"/>
+          <text x="570" y="222" text-anchor="middle" font-size="13" font-weight="600" fill="#1F1E1C">2 × 1 = 2</text>
+          <text x="570" y="238" text-anchor="middle" font-size="11" fill="#566849">factorial(2)</text>
+
+          <rect x="420" y="124" width="230" height="46" rx="9" fill="#EFF3EA" stroke="#7C8B6F"/>
+          <text x="535" y="146" text-anchor="middle" font-size="13" font-weight="600" fill="#1F1E1C">3 × 2 = 6</text>
+          <text x="535" y="162" text-anchor="middle" font-size="11" fill="#566849">factorial(3)</text>
+
+          <rect x="385" y="48" width="230" height="46" rx="9" fill="#EFF3EA" stroke="#7C8B6F"/>
+          <text x="500" y="70" text-anchor="middle" font-size="13" font-weight="600" fill="#1F1E1C">4 × 6 = 24</text>
+          <text x="500" y="86" text-anchor="middle" font-size="11" fill="#566849">factorial(4) — answer!</text>
+        </g>
+
+        <!-- ascent arrows -->
+        <line x1="600" y1="276" x2="575" y2="248" stroke="#7C8B6F" stroke-width="2" marker-end="url(#ar-up)"/>
+        <line x1="565" y1="200" x2="540" y2="172" stroke="#7C8B6F" stroke-width="2" marker-end="url(#ar-up)"/>
+        <line x1="530" y1="124" x2="505" y2="96" stroke="#7C8B6F" stroke-width="2" marker-end="url(#ar-up)"/>
+
+        <!-- handoff at the bottom -->
+        <path d="M375 301 C 420 330, 450 330, 488 301" fill="none" stroke="#C9A227" stroke-width="2" stroke-dasharray="4 4"/>
+        <text x="432" y="345" text-anchor="middle" font-size="10.5" fill="#8A6E13">turn around</text>
+      </svg>
+      <div class="legend">
+        <span><span class="sw" style="background:#FFFFFF;border:1px solid #E9E5DC;"></span>Breaking down (descent)</span>
+        <span><span class="sw" style="background:#F6EFD6;border:1px solid #C9A227;"></span>Base case</span>
+        <span><span class="sw" style="background:#EFF3EA;border:1px solid #7C8B6F;"></span>Combining (ascent)</span>
+      </div>
+      <p class="caption">Computing <code>factorial(4)</code>: each call waits on a smaller one until <code>factorial(1)</code> answers directly, then the results multiply back up.</p>
+    </div>
+  </section>
+
+  <!-- Code -->
+  <section>
+    <span class="tag t-call"><span class="dot"></span>IN CODE</span>
+    <h2>The four moves, mapped to lines</h2>
+    <p class="muted">Here is the same example in Python. Notice how each comment lines up with one of the four moves.</p>
+<pre><code><span class="c-key">def</span> <span class="c-fn">factorial</span>(n):
+    <span class="c-com"># MOVE 4 — base case / terminating condition</span>
+    <span class="c-key">if</span> n == 1:
+        <span class="c-key">return</span> <span class="c-base">1</span>
+
+    <span class="c-com"># MOVE 1 — smaller subproblem: factorial(n - 1)</span>
+    <span class="c-com"># MOVE 2 — recursive call, assume it returns the right answer</span>
+    smaller = <span class="c-fn">factorial</span>(n - 1)
+
+    <span class="c-com"># MOVE 3 — combine the sub-solution into this answer</span>
+    <span class="c-key">return</span> n * smaller</code></pre>
+    <div class="callout">
+      <p style="margin:0;"><strong>The leap of faith.</strong> When you read <code>factorial(n - 1)</code>, don't trace it. Assume it already returns the correct factorial of <code>n − 1</code>. Your only job is to combine that result correctly — and to make sure the base case exists so the chain ends.</p>
+    </div>
+  </section>
+
+  <!-- Base case emphasis -->
+  <section>
+    <span class="tag t-base"><span class="dot"></span>DON'T FORGET</span>
+    <h2>The terminating condition is non-negotiable</h2>
+    <p class="muted">A base case answers the smallest input <em>without</em> recursing. Leave it out and every call spawns another call — the stack grows until the program crashes (a "stack overflow"). Two things must be true for recursion to terminate:</p>
+    <div class="steps">
+      <div class="step s4">
+        <div class="num">A</div>
+        <div>
+          <h3>There is a base case</h3>
+          <p>At least one input is handled directly with a plain answer and no recursive call.</p>
+        </div>
+      </div>
+      <div class="step s1">
+        <div class="num">B</div>
+        <div>
+          <h3>Every call moves toward it</h3>
+          <p>Each recursive call uses a strictly smaller / simpler input, so the base case is always eventually reached.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recap -->
+  <section>
+    <span class="tag t-combine"><span class="dot"></span>RECAP</span>
+    <h2>One sentence to remember it by</h2>
+    <p><em>Break the problem into a smaller version of itself, call the function on it and assume the answer comes back, combine that answer into yours — and add a base case so the smallest version stops the chain.</em></p>
+  </section>
+
+  <footer>
+    A visual guide to recursion · part of the Learning Resources collection.
+  </footer>
+
+</div>
+</body>
+</html>
